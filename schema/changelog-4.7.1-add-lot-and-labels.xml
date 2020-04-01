@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd"
+    logicalFilePath="changelog-4.7.1-add-lot-and-labels.xml">
+
+    <changeSet author="author" id="changelog-4.2-add-lot-and-labels.xml">
+        <createTable tableName="tc_lots">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="lotno" type="VARCHAR(512)">
+                <!--<constraints nullable="false" unique="true"/>-->
+            </column>
+            <column name="attributes" type="VARCHAR(4000)" />         
+            <column name="running" type="VARCHAR(1)" defaultValue="N" />
+            <column name="started" type="TIMESTAMP"/>
+            <column name="ended" type="TIMESTAMP"/>        
+            
+        </createTable>
+	
+        <createTable tableName="tc_labels">
+            <column name="id" type="INT" autoIncrement="true">
+                <constraints primaryKey="true" />
+            </column>
+            <column name="created" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false" />
+            </column>	  
+            <column name="protocol" type="VARCHAR(128)" />
+            <column name="lotid" type="INT">
+                <constraints nullable="false" />
+            </column>         
+            <column name="label" type="VARCHAR(512)">
+                <constraints nullable="false" />
+            </column>
+            <column name="info" type="VARCHAR(4000)" />    
+            <column name="repeated" type="varchar(1)" defaultValue="N" />
+            <column name="error" type="varchar(1)" defaultValue="N" />
+        </createTable>
+        <addForeignKeyConstraint baseTableName="tc_labels" baseColumnNames="lotid" constraintName="fk_labels_lot_id" onDelete="CASCADE" referencedColumnNames="id" referencedTableName="tc_lots" />     
+        <sqlFile dbms="postgresql" path="./schema/lot_labels_triggers_pgsql.sql" splitStatements="false"/>
+    </changeSet>
+
+</databaseChangeLog>
