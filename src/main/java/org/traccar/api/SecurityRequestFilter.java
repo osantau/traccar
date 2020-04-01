@@ -15,6 +15,7 @@
  */
 package org.traccar.api;
 
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.traccar.Context;
@@ -61,7 +62,7 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
     @javax.ws.rs.core.Context
     private ResourceInfo resourceInfo;
 
-    @Override
+ /*   @Override
     public void filter(ContainerRequestContext requestContext) {
 
         if (requestContext.getMethod().equals("OPTIONS")) {
@@ -114,6 +115,11 @@ public class SecurityRequestFilter implements ContainerRequestFilter {
             }
         }
 
+    } */   
+
+    @Override
+    public void filter(ContainerRequestContext crc) throws IOException {
+       
     }
 
 }

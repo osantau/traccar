@@ -61,7 +61,7 @@ public class AsyncSocket extends WebSocketAdapter implements ConnectionManager.U
         super.onWebSocketClose(statusCode, reason);
 
         Context.getConnectionManager().removeListener(userId, this);
-    }
+    }   
 
     @Override
     public void onUpdateDevice(Device device) {

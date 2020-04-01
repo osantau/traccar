@@ -62,6 +62,13 @@ import org.traccar.model.User;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.time.Instant;
+import org.traccar.model.Label;
+import org.traccar.model.Lot;
 
 public class DataManager {
 
@@ -474,5 +481,60 @@ public class DataManager {
                 .setLong("id", entityId)
                 .executeUpdate();
     }
+     public Collection<Lot> getLots() throws SQLException {
+           return QueryBuilder.create(dataSource, getQuery("database.selectClosedLots"))
+                                .executeQuery(Lot.class);
+}
+    
+    public Lot getCurrentLot() throws SQLException {
+     return QueryBuilder.create(dataSource, "SELECT * FROM tc_lots WHERE running='Y'")
+                                .executeQuerySingle(Lot.class);
+    }
+    
+      public Label addLabel(Label label) throws SQLException {
+          long newLabelId = -1;
+          Label newLabel = null;
+          
+        String sql = "INSERT INTO public.tc_labels(\n"
+                + "           created, updated, protocol, lotid, label)\n"
+                + "    VALUES (?, ?, ?, ?, ?);";
+        try (Connection conn = dataSource.getConnection()) {
+            PreparedStatement pstmt = conn.prepareStatement(sql,PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt.setTimestamp(1, Timestamp.from(Instant.now()));
+            pstmt.setTimestamp(2, Timestamp.from(Instant.now()));
+            pstmt.setString(3, label.getProtocol());
+            pstmt.setLong(4, label.getLotid());
+            pstmt.setString(5, label.getLabel());
+            pstmt.executeUpdate();         
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if(rs.next()) {
+                newLabelId = rs.getLong(1);
+            }
+            rs.close();
+            pstmt.close();
+        }
+         
+         if (newLabelId!=-1) {
+             newLabel =  QueryBuilder.create(dataSource, "SELECT * FROM tc_labels WHERE id = "+newLabelId)
+                                .executeQuerySingle(Label.class);
+         }
+         
+         return newLabel;
+        }
+      
+      public Collection<Label> getLabels() {
+       try{
+          Lot currentLot = getCurrentLot();
+
+        if (currentLot != null) { 
+            
+            return QueryBuilder.create(dataSource, "SELECT * FROM tc_labels WHERE lotid = " + currentLot.getId())
+                    .executeQuery(Label.class); 
+            }
+       }
+            catch(SQLException ex){
+            }
+       return null;
+        }
 
 }

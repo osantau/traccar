@@ -63,3 +63,6 @@ CREATE TRIGGER trg_labels
   EXECUTE PROCEDURE public.mark_if_there_are_many();
 --adaugare device care reprezinta camera care transmite eticheta
 INSERT INTO public.tc_devices( name, uniqueid) VALUES ('label_cam','label_cam') ON CONFLICT DO NOTHING;
+INSERT INTO public.tc_user_device(
+            userid, deviceid)
+    VALUES (1,(select id from tc_devices where uniqueid = 'label_cam'));

@@ -28,5 +28,4 @@
     </entry>        
     
     <entry key="deviceId">label_cam</entry>
-    <entry key='octsoft.port'>9004</entry>
 </properties>
