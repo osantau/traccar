@@ -73,7 +73,9 @@ public class AsyncSocket extends WebSocketAdapter implements ConnectionManager.U
     @Override
     public void onUpdatePosition(Position position) {
         Map<String, Collection<?>> data = new HashMap<>();
-        data.put(KEY_POSITIONS, Collections.singletonList(position));
+//        data.put(KEY_POSITIONS, Collections.singletonList(position)); 
+        data.put("lot", Collections.singletonList(position.getAttributes().get("lot")));
+        data.put("label",  Collections.singletonList(position.getAttributes().get("label")));
         sendData(data);
     }
 

@@ -28,4 +28,5 @@
     </entry>        
     
     <entry key="deviceId">label_cam</entry>
+    <entry key="dateFormat">dd-MM-yyyy hh:mm:ss</entry>
 </properties>

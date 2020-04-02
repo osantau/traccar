@@ -68,6 +68,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.ext.ContextResolver;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 public final class Context {
@@ -86,6 +87,8 @@ public final class Context {
     private static ObjectMapper objectMapper;
 
     public static ObjectMapper getObjectMapper() {
+        SimpleDateFormat df = new SimpleDateFormat(getConfig().getString("dateFormat"));
+        objectMapper.setDateFormat(df);
         return objectMapper;
     }
 

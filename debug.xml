@@ -26,4 +26,5 @@
     
     <entry key='atrack.custom'>true</entry>
     <entry key="deviceId">label_cam</entry>
+    <entry key="dateFormat">dd.MM.yyyy HH:mm:ss</entry>
 </properties>

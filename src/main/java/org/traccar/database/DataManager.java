@@ -528,7 +528,7 @@ public class DataManager {
 
         if (currentLot != null) { 
             
-            return QueryBuilder.create(dataSource, "SELECT * FROM tc_labels WHERE lotid = " + currentLot.getId())
+            return QueryBuilder.create(dataSource, "SELECT * FROM tc_labels WHERE lotid = " + currentLot.getId()+ " ORDER BY CREATED DESC ")
                     .executeQuery(Label.class); 
             }
        }
@@ -536,5 +536,11 @@ public class DataManager {
             }
        return null;
         }
-
+      
+      public Collection<Label> getLabels(long lotId, String labelName) throws SQLException {           
+          String sql =  "SELECT * FROM tc_labels WHERE lotid = " + lotId 
+                  +(labelName!=null ? " AND label='"+labelName+"' ":" ")+" ORDER BY CREATED DESC";
+            return QueryBuilder.create(dataSource,sql)
+                    .executeQuery(Label.class);              
+        }
 }

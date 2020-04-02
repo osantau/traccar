@@ -47,7 +47,7 @@ end if;
 SELECT count(*)+1 FROM tc_labels where lotid= NEW.lotid into v_total;
 SELECT count(*) FROM tc_labels where lotid= NEW.lotid AND error='Y' into v_errors; IF (NEW.error='Y') THEN v_errors = v_errors  + 1; END IF;
 SELECT count(*)  FROM tc_labels where lotid= NEW.lotid AND repeated='Y'  into v_repeats; IF (NEW.repeated='Y') THEN v_repeats = v_repeats  + 1; END IF;
-SELECT count(*)  FROM tc_labels where lotid= NEW.lotid AND repeated in ('Y','N') and error='N'  into v_viables; IF (NEW.repeated='N' AND NEW.error ='N') THEN v_viables = v_viables  + 1; END IF;
+SELECT count(*)  FROM tc_labels where lotid= NEW.lotid AND repeated in ('N') and error='N'  into v_viables; IF (NEW.repeated='N' AND NEW.error ='N') THEN v_viables = v_viables  + 1; END IF;
 
 
 UPDATE tc_lots set  attributes = '{ "total" : '||v_total||', "errors" : '||v_errors||', "repeats" : '||v_repeats||', "viables" : '||v_viables||' }' where id = NEW.lotid;
