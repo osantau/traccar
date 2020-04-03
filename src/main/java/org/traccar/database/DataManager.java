@@ -491,6 +491,11 @@ public class DataManager {
                                 .executeQuerySingle(Lot.class);
     }
     
+    public Lot getLotById(Long lotId) throws SQLException {
+     return QueryBuilder.create(dataSource, "SELECT * FROM tc_lots WHERE id = "+lotId+"")
+                                .executeQuerySingle(Lot.class);
+    }
+    
       public Label addLabel(Label label) throws SQLException {
           long newLabelId = -1;
           Label newLabel = null;

@@ -14,6 +14,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -58,6 +59,13 @@ public class LotResource extends BaseObjectResource<Lot> {
          return Response.ok(entity).build();
     } 
     
+    @GET
+    @Path("single/{lotId}")    
+    @Produces(MediaType.APPLICATION_JSON)
+    public Lot getSingle(@PathParam("lotId") Long lotId) throws SQLException {
+        Lot lot = Context.getDataManager().getLotById(lotId);       
+        return lot;
+    }
     private Map<String, Object> getDefaultAttributes() {
         Map<String, Object> attributes = new LinkedHashMap<String, Object>(); 
         attributes.put("total",Long.valueOf(0));
