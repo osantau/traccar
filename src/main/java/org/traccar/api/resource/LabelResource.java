@@ -7,6 +7,8 @@ package org.traccar.api.resource;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -28,6 +30,15 @@ public class LabelResource {
      @GET     
      public Collection<Label> getLabels() throws SQLException {
         return Context.getDataManager().getLabels();
+    }
+     
+     
+     @GET
+     @Path("assoc")
+       public Map<String, Collection<?>>getLabelsWithId() throws SQLException {
+             Map<String, Collection<?>> data = new HashMap<>();
+             data.put("data",Context.getDataManager().getLabels());
+        return data ;
     }
     
     @GET 
