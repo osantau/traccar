@@ -5,18 +5,26 @@
  */
 package org.traccar.protocol;
 
+import de.re.easymodbus.modbusclient.ModbusClient;
 import io.netty.channel.Channel;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.traccar.BaseProtocolDecoder;
 import org.traccar.Context;
 import org.traccar.DeviceSession;
 import org.traccar.Protocol;
+import org.traccar.database.DeviceManager;
 import org.traccar.model.Label;
 import org.traccar.model.Lot;
 import org.traccar.model.Position;
+import org.traccar.model.Device;
 
 /**
  *
@@ -36,7 +44,7 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
         if (deviceSession == null) {
             return null;
         }
-
+        
         Lot lot = Context.getDataManager().getCurrentLot();
 
         Label label = new Label();
@@ -60,6 +68,38 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
         attributes.put("lot", lot);
         attributes.put("label", insertedLabel);
         position.setAttributes(attributes);
+        
+        DeviceManager deviceManager = Context.getDeviceManager();
+        Device device = deviceManager.getById(deviceSession.getDeviceId());
+        Map<String,Object> attrs = device.getAttributes();  
+
+        if (attrs.get("plc_active").toString().equals("Y")) {
+            if (insertedLabel.getError().equals("Y") || insertedLabel.getRepeated().equals("Y")) {
+                sendDataToDevicePLC(attrs.get("plc_ip").toString(), (Integer) attrs.get("plc_port"), (Integer) attrs.get("plc_register"), 1);
+            } else {
+                sendDataToDevicePLC(attrs.get("plc_ip").toString(), (Integer) attrs.get("plc_port"), (Integer) attrs.get("plc_register"), 0);
+            }
+        }
         return position;
     }
+    private void sendDataToDevicePLC(String ip, int port, int register, int regValue) {     
+        ModbusClient modbusClient = new ModbusClient(ip, port);
+        try{
+            modbusClient.Connect();					
+            modbusClient.WriteSingleRegister(register, regValue);
+            modbusClient.Disconnect();
+        } catch(Exception ex) {
+			 Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally {
+            if(modbusClient != null) {
+                try {
+                    modbusClient.Disconnect();
+                } catch (IOException ex) {
+                    Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
+    }       
 }
