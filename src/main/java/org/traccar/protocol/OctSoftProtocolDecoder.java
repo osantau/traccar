@@ -31,7 +31,7 @@ import org.traccar.model.Device;
  * @author osantau
  */
 public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
-    
+    private static int reg2Flag = 0;
     public OctSoftProtocolDecoder(Protocol protocol) {
         super(protocol);
     }
@@ -84,10 +84,15 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
     }
     private void sendDataToDevicePLC(String ip, int port, int register, int regValue) {     
         ModbusClient modbusClient = new ModbusClient(ip, port);
-        try{
+        try{            
+            
             modbusClient.Connect();					
-            modbusClient.WriteSingleRegister(register, regValue);
+            modbusClient.WriteSingleRegister(register, regValue); 
+            //scrie in registrul 2 0 sau 1 in functie de ce se transmite
+            modbusClient.WriteSingleRegister(1, reg2Flag); 
+            reg2Flag = reg2Flag==0?1:0;                       
             modbusClient.Disconnect();
+            
         } catch(Exception ex) {
 			 Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, null, ex);
         }
