@@ -5,6 +5,7 @@
  */
 package org.traccar.protocol;
 
+import de.re.easymodbus.exceptions.ModbusException;
 import de.re.easymodbus.modbusclient.ModbusClient;
 import io.netty.channel.Channel;
 import java.io.IOException;
@@ -31,7 +32,7 @@ import org.traccar.model.Device;
  * @author osantau
  */
 public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
-    private static int reg2Flag = 0;
+    private int reg2Flag = 0;
     public OctSoftProtocolDecoder(Protocol protocol) {
         super(protocol);
     }
@@ -75,33 +76,39 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
 
         if (attrs.get("plc_active").toString().equals("Y")) {
             if (insertedLabel.getError().equals("Y") || insertedLabel.getRepeated().equals("Y")) {
-                sendDataToDevicePLC(attrs.get("plc_ip").toString(), (Integer) attrs.get("plc_port"), (Integer) attrs.get("plc_register"), 1);
+                // NOK
+                sendDataToDevicePLC(attrs, 0);
             } else {
-                sendDataToDevicePLC(attrs.get("plc_ip").toString(), (Integer) attrs.get("plc_port"), (Integer) attrs.get("plc_register"), 0);
+                //OK
+                sendDataToDevicePLC(attrs, 1);
             }
         }
         return position;
     }
-    private void sendDataToDevicePLC(String ip, int port, int register, int regValue) {     
-        ModbusClient modbusClient = new ModbusClient(ip, port);
+    private void sendDataToDevicePLC(Map<String,Object> attrs, int regValue) {     
+        int plcReg1 = (Integer) attrs.get("plc_reg1");
+        int plcReg2 = (Integer) attrs.get("plc_reg2");
+        ModbusClient modbusClient = new ModbusClient(attrs.get("plc_ip").toString(), (Integer) attrs.get("plc_port"));
         try{            
             
             modbusClient.Connect();					
-            modbusClient.WriteSingleRegister(register, regValue); 
-            //scrie in registrul 2 0 sau 1 in functie de ce se transmite
-            modbusClient.WriteSingleRegister(1, reg2Flag); 
-            reg2Flag = reg2Flag==0?1:0;                       
+            reg2Flag = modbusClient.ReadHoldingRegisters(plcReg2, 1)[0];
+            
+            modbusClient.WriteSingleRegister(plcReg1, regValue); 
+            //scrie in registrul 2 0 sau 1 in functie de valoarea precedenta            
+            modbusClient.WriteSingleRegister(plcReg2, reg2Flag == 0 ? 1:0); 
+           
             modbusClient.Disconnect();
             
-        } catch(Exception ex) {
-			 Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ModbusException | IOException ex) {
+			 Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
         }
         finally {
             if(modbusClient != null) {
                 try {
                     modbusClient.Disconnect();
                 } catch (IOException ex) {
-                    Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(OctSoftProtocolDecoder.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
                 }
             }
         }
