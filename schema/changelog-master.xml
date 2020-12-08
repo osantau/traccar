@@ -25,4 +25,5 @@
   <include file="changelog-4.1.xml" relativeToChangelogFile="true" />
   <include file="changelog-4.7.xml" relativeToChangelogFile="true" />
   <include file="changelog-4.7.1-add-lot-and-labels.xml" relativeToChangelogFile="true"/>
+  <include file="changelog-4.7.2-add-tc-wenglor.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

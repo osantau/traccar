@@ -69,6 +69,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import org.traccar.model.Label;
 import org.traccar.model.Lot;
+import org.traccar.model.WenglorCam;
 
 public class DataManager {
 
@@ -547,5 +548,28 @@ public class DataManager {
                   +(labelName!=null ? " AND label='"+labelName+"' ":" ")+" ORDER BY CREATED DESC";
             return QueryBuilder.create(dataSource,sql)
                     .executeQuery(Label.class);              
+        }
+      
+        public void addWenglorCamData(WenglorCam wenglorCam) throws SQLException {          
+         
+        String sql = "INSERT INTO tc_wenglor(deviceid,created, protocol, message, description, p1, p2, p3, p4, p5, p6, p7, p8) "
+                    +"    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+        try (Connection conn = dataSource.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, wenglorCam.getDeviceId());
+            pstmt.setTimestamp(2, Timestamp.from(Instant.now()));
+            pstmt.setString(3, wenglorCam.getProtocol());
+            pstmt.setString(4, wenglorCam.getMessage());
+            pstmt.setString(5, wenglorCam.getDescription());
+            pstmt.setString(6, wenglorCam.getP1());
+            pstmt.setString(7, wenglorCam.getP2());
+            pstmt.setString(8, wenglorCam.getP3());
+            pstmt.setString(9, wenglorCam.getP4());
+            pstmt.setString(10, wenglorCam.getP5());
+            pstmt.setString(11, wenglorCam.getP6());
+            pstmt.setString(12, wenglorCam.getP7());
+            pstmt.setString(13, wenglorCam.getP8());            
+            pstmt.executeUpdate();          
+        }
+                         
         }
 }
