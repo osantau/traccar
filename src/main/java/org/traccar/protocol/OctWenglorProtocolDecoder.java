@@ -28,18 +28,14 @@ public class OctWenglorProtocolDecoder extends BaseProtocolDecoder {
     @Override
     protected Object decode(Channel channel, SocketAddress remoteAddress, Object msg) throws Exception {
        
-        ByteBuf buf = (ByteBuf) msg;
-        byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
-        String sentence = new String(bytes);
-        boolean isEmpty = sentence.replaceAll(",","").trim().isEmpty();
-        
-        if(channel instanceof DatagramChannel)
-        {
-            System.out.println(sentence);
-            String[] params = isEmpty ? new String[]{"","","","","","","",""} : sentence.split(",");                
-            System.out.println(Context.getConfig().getString("wenglorCamId"));
-            DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("wenglorCamId"));                                              
+//        ByteBuf buf = (ByteBuf) msg;
+//        byte[] bytes = new byte[buf.readableBytes()];
+//        buf.readBytes(bytes);
+//        String sentence = new String(bytes);
+         String sentence = (String) msg;
+         boolean isEmpty = sentence.replaceAll(",","").trim().isEmpty();                    
+            String[] params = isEmpty ? new String[]{"","","","","","","",""} : sentence.split(",");                            
+            DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("deviceId"));                                              
             WenglorCam wenglorCam = new WenglorCam();
             wenglorCam.setDeviceId(deviceSession.getDeviceId());
             wenglorCam.setProtocol(getProtocolName());
@@ -54,7 +50,7 @@ public class OctWenglorProtocolDecoder extends BaseProtocolDecoder {
             wenglorCam.setP7(params[6]);
             wenglorCam.setP8(params[7]);             
             Context.getDataManager().addWenglorCamData(wenglorCam);
-        }
+        
         return null;
     }     
 }

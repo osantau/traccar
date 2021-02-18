@@ -41,7 +41,7 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
     protected Object decode(Channel channel, SocketAddress remoteAddress, Object msg) throws Exception {
 
         String sentence = ((String) msg).replaceAll("[\\n\\r]+", "");
-        DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("deviceId"));
+        DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("wenglorCamId"));
         if (deviceSession == null) {
             return null;
         }
@@ -50,7 +50,7 @@ public class OctSoftProtocolDecoder extends BaseProtocolDecoder {
 
         Label label = new Label();
         label.setLotid(lot.getId());
-        label.setLabel(sentence);
+        label.setLabel(sentence.toUpperCase());
         label.setProtocol(getProtocolName());
         Label insertedLabel = Context.getDataManager().addLabel(label);
         //get with updated info
