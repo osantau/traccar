@@ -16,7 +16,7 @@
     <entry key='logger.console'>true</entry>
 
     <entry key='database.driver'>org.postgresql.Driver</entry>
-    <entry key='database.url'>jdbc:postgresql://127.0.0.1:5432/traccarwenglor</entry>
+    <entry key='database.url'>jdbc:postgresql://127.0.0.1:5432/traccar</entry>
     <entry key='database.user'>traccar</entry>
     <entry key='database.password'>1234</entry>
     
@@ -27,5 +27,5 @@
     <entry key='atrack.custom'>true</entry>
     <entry key="deviceId">label_cam</entry>
     <entry key="dateFormat">dd.MM.yyyy HH:mm:ss</entry>
-    <entry key="wenglorCam101Id">wenglor_cam_101</entry>
+    <entry key="wenglorCamId">wenglor_cam</entry>
 </properties>

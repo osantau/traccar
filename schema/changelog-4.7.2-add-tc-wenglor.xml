@@ -28,7 +28,8 @@
             <column name="p6" type="VARCHAR(32)"/>
             <column name="p7" type="VARCHAR(32)"/>
             <column name="p8" type="VARCHAR(32)"/>                                    
-        </createTable>      
+        </createTable>     
+        <sqlFile dbms="postgresql" path="./schema/add_wenglor_device.sql" splitStatements="false"/> 
     </changeSet>
 
 </databaseChangeLog>

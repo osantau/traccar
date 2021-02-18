@@ -13,6 +13,7 @@ import org.traccar.BaseProtocolDecoder;
 import org.traccar.Context;
 import org.traccar.DeviceSession;
 import org.traccar.Protocol;
+import org.traccar.model.Device;
 import org.traccar.model.WenglorCam;
 
 /**
@@ -36,11 +37,9 @@ public class OctWenglorProtocolDecoder extends BaseProtocolDecoder {
         if(channel instanceof DatagramChannel)
         {
             System.out.println(sentence);
-            String[] params = isEmpty ? new String[]{"","","","","","","",""} : sentence.split(",");            
-            DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("wenglorCam101Id"));        
-            if (deviceSession == null){
-                return null;
-            }
+            String[] params = isEmpty ? new String[]{"","","","","","","",""} : sentence.split(",");                
+            System.out.println(Context.getConfig().getString("wenglorCamId"));
+            DeviceSession deviceSession = getDeviceSession(channel, remoteAddress, Context.getConfig().getString("wenglorCamId"));                                              
             WenglorCam wenglorCam = new WenglorCam();
             wenglorCam.setDeviceId(deviceSession.getDeviceId());
             wenglorCam.setProtocol(getProtocolName());
